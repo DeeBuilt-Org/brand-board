@@ -1,5 +1,5 @@
 // The CONSUMER side of the Brand Kit Interop Contract. Parses the JSON payloads
-// the other Opsette tools emit (see docs/BRAND-KIT-INTEROP-CONTRACT.md) into
+// the other kit tools emit (see docs/BRAND-KIT-INTEROP-CONTRACT.md) into
 // Brand Board's state. Tolerant: accepts the exact contract shape, and falls
 // back to lenient parsing so a partial/hand-built blob still lands.
 

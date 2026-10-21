@@ -1,4 +1,4 @@
-// Brand Board fonts — now derived from the shared Opsette font library (single
+// Brand Board fonts — now derived from the shared font library (single
 // source of truth). See `src/lib/shared-fonts.ts` (vendored from `_shared/fonts/`)
 // and the family-wide spec `FONTS_AND_PAIRING.md`.
 //
@@ -26,7 +26,7 @@ export interface FontPairing {
 
 /**
  * Adapt a shared-library pairing to Brand Board's flat family shape. The picker
- * UI now comes from the shared OpsetteFontPicker (grouped by vibe itself), so
+ * UI now comes from the shared font picker (grouped by vibe itself), so
  * this shape only needs the id + the two family strings the renderer, project
  * files, and interop payload carry.
  */

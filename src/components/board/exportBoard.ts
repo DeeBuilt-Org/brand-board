@@ -74,7 +74,7 @@ export async function pagesToPngBlobs(
  * Freeze the board's OWN pages into base64 PNG strings, keyed by PageId — the
  * self-inclusion capture. This is the exact same rasterization the PNG download
  * uses (pageToPngDataUrl), just stored into the kit instead of downloaded, so
- * Brand Board's designed pages ride inside the one .opsette-kit.json (and File
+ * Brand Board's designed pages ride inside the one .brand-kit.json (and File
  * Builder, which can't draw, finds finished pictures to drop in the zip).
  *
  * Runs sequentially and AWAITS every page, so the caller can trust that when

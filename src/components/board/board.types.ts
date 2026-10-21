@@ -2,7 +2,7 @@ import type { LayoutId } from "./layouts";
 import type { LogoChip } from "./logoChip";
 
 // The data model for a brand board. Brand Board is a CONSUMER: it holds the
-// assets a user pastes/uploads from the other Opsette tools (per
+// assets a user pastes/uploads from the other kit tools (per
 // BRAND-KIT-INTEROP-CONTRACT.md) and composes them into one designed page.
 //
 // The board is a set of BLOCKS (hero, palette, type, signature, qr, card, logo)

@@ -12,7 +12,9 @@ import {
 } from "./guide-content";
 import "./board-template.css";
 
-const OPSETTE_LOGO = `${import.meta.env.BASE_URL}opsette-logo.png`;
+// The small trimmed maker logo (120px tall, ~8.5KB), never the full-size file:
+// it is baked into every exported PNG and PDF page.
+const MAKER_LOGO = `${import.meta.env.BASE_URL}deebuilt-logo-pdf.png`;
 
 /** Rec. 601 luma → readable ink for text sitting on a color field. */
 function readableInk(hex: string): string {
@@ -170,8 +172,8 @@ export const BrandPage = forwardRef<HTMLDivElement, BrandPageProps>(
             )}
           </span>
           <span className="bb-foot-mark">
-            <img src={OPSETTE_LOGO} alt="" crossOrigin="anonymous" />
-            Made with Opsette
+            <img src={MAKER_LOGO} alt="" crossOrigin="anonymous" />
+            Made with DeeBuilt
           </span>
         </div>
       </div>
@@ -520,7 +522,7 @@ export const GuidePage = forwardRef<HTMLDivElement, GuidePageProps>(
             )}
           </span>
           <span className="bb-foot-mark">
-            <img src={OPSETTE_LOGO} alt="" crossOrigin="anonymous" />
+            <img src={MAKER_LOGO} alt="" crossOrigin="anonymous" />
             {GUIDE_FOOTER}
           </span>
         </div>

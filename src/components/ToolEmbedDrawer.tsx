@@ -11,7 +11,7 @@ const { Text } = Typography;
 
 /**
  * ToolEmbedDrawer — the reusable Mechanism 3 host (docs/KIT-SUITE-CONNECT-PLAN.md).
- * Edit any embeddable Opsette tool WITHOUT leaving Brand Board: the tool loads in
+ * Edit any embeddable kit tool WITHOUT leaving Brand Board: the tool loads in
  * a same-origin <iframe> inside a right-side drawer, and the full asset blob passes
  * both ways via postMessage (no size limit, no clipboard prompt).
  *

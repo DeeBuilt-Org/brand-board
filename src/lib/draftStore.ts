@@ -11,7 +11,7 @@
 // whole draft — blobs and all — survives a reload.
 //
 // This is ONLY the crash-recovery autosave. The durable per-client archive is
-// still the downloaded .opsette-kit.json file (projectFile.ts); the draft is
+// still the downloaded .brand-kit.json file (projectFile.ts); the draft is
 // the "didn't lose my in-progress edits on refresh" safety net.
 //
 // A tiny promise-wrapped store — no dependency. One database, one object store,

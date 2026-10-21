@@ -1,5 +1,5 @@
 /**
- * Lightweight haptic feedback for Opsette apps.
+ * Lightweight haptic feedback.
  *
  * Reality of haptics on the web:
  *   • Android Chrome supports navigator.vibrate() — a real short buzz.
@@ -11,7 +11,7 @@
  * silently absent where it doesn't. The visible press-state styling (see
  * tokens.css) is what carries the "tap registered" feeling everywhere.
  *
- * Portable: copy this file into any Opsette tool's src/lib and import haptic().
+ * Portable: copy this file into any tool's src/lib and import haptic().
  */
 
 type HapticPattern = 'tap' | 'success' | 'warning';

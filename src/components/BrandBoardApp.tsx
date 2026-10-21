@@ -306,7 +306,7 @@ function BrandBoardInner() {
   // the only copy of unsaved work — so it confirms first. Clearing to
   // emptyBoard() lets the persist effect overwrite the IndexedDB draft, so a
   // refresh stays empty (this is the "I'm stuck with the last kit and can't
-  // start clean" fix). Reset does NOT touch any saved .opsette-kit.json file.
+  // start clean" fix). Reset does NOT touch any saved .brand-kit.json file.
   const resetBoard = () => {
     Modal.confirm({
       title: "Start over with a blank board?",

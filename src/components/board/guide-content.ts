@@ -134,4 +134,4 @@ export const SIZE_GROUPS: SizeGroup[] = [
 ];
 
 /** The footer sign-off line. */
-export const GUIDE_FOOTER = "Made with Opsette · tools.opsette.io";
+export const GUIDE_FOOTER = "Made with DeeBuilt · tools.deebuilt.co";

@@ -42,7 +42,7 @@
  */
 
 /** The apex origin every deployed tool shares — the postMessage trust anchor. */
-export const OPSETTE_TOOLS_ORIGIN = "https://tools.opsette.io";
+export const OPSETTE_TOOLS_ORIGIN = "https://tools.deebuilt.co";
 
 /** Route slug per embeddable/seedable tool. Kept here so link builders and the
  *  origin check agree on one spelling. Matches each repo's Vite `base`. */

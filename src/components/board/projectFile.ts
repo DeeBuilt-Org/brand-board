@@ -3,7 +3,7 @@
 // Brand Board is the one place that holds a client's WHOLE kit (palette,
 // signature, QR, card, logo, layout, name/tagline). "Save Project" downloads
 // all of it as a single .json a user keeps in their own file system
-// (Clients/Acme/acme.opsette-kit.json). "Open Project" rehydrates the board
+// (Clients/Acme/acme.brand-kit.json). "Open Project" rehydrates the board
 // from that file — so a revision three weeks later is: open the file, edit,
 // re-export. No backend, one portable file per client, survives browser wipes.
 //
@@ -71,5 +71,7 @@ export function parseProject(text: string): LoadedProject | null {
 
 export function projectFileName(kitName: string): string {
   const safe = (kitName || "brand-kit").replace(/[^a-z0-9-_]+/gi, "-").toLowerCase();
-  return `${safe}.opsette-kit.json`;
+  // Older saves used `.opsette-kit.json`; Open Project accepts any .json, so
+  // those still reopen.
+  return `${safe}.brand-kit.json`;
 }

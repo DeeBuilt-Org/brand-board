@@ -1,0 +1,65 @@
+/**
+ * Brand Board header.
+ *
+ * Surface and accent colors live in the --app-header-* variables so light and
+ * dark mode are one override block, not scattered conditionals. Dark mode keys
+ * off the html.dark class ThemeProvider toggles.
+ */
+:root {
+  --app-header-bg: #ffffff;
+  --app-header-border: #e5e7eb;
+  --app-header-accent: #2f4f46;
+}
+
+html.dark {
+  --app-header-bg: #141414;
+  --app-header-border: #303030;
+  --app-header-accent: #e4c49a;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--ops-space-lg);
+  height: 60px;
+  padding: 0 var(--ops-page-pad);
+  background: var(--app-header-bg);
+  border-bottom: 1px solid var(--app-header-border);
+  box-sizing: border-box;
+}
+
+.app-header__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ops-space-sm);
+  flex: 1 1 auto;
+  min-width: 0; /* allow the name to truncate on narrow phones */
+  color: var(--app-header-accent);
+}
+
+.app-header__mark {
+  font-size: 22px;
+  flex: 0 0 auto;
+}
+
+.app-header__name {
+  margin: 0;
+  font-size: clamp(18px, 5vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ops-space-sm);
+  flex: 0 0 auto;
+}

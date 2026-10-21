@@ -1,5 +1,5 @@
 import { Modal, Typography } from "antd";
-import { OpsetteFooterLogo } from "@/components/opsette-share";
+import DeeBuiltCredit from "@/components/DeeBuiltCredit";
 
 const { Paragraph, Title } = Typography;
 
@@ -22,7 +22,7 @@ export default function PrivacyModal({ open, onClose }: PrivacyModalProps) {
         PDF you export are generated in your browser and never leave your device
         until you share them.
       </Paragraph>
-      <OpsetteFooterLogo />
+      <DeeBuiltCredit />
     </Modal>
   );
 }

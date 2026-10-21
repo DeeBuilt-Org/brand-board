@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { Layout, Space, Switch, Typography } from "antd";
 import { SunOutlined, MoonOutlined } from "@ant-design/icons";
-import { OpsetteHeader } from "@/components/opsette-header";
+import AppHeader from "@/components/AppHeader";
+import DeeBuiltCredit from "@/components/DeeBuiltCredit";
 import { useThemeMode } from "@/lib/theme";
 import { haptic } from "@/lib/haptics";
 import AboutModal from "@/components/AboutModal";
@@ -11,13 +12,13 @@ const { Content, Footer } = Layout;
 const { Link, Text } = Typography;
 
 /**
- * Shell — the Opsette chrome wrapper for Brand Board. Renders the canonical
- * unified header (logo / "Brand Board" / share + dark toggle), the page
- * content, and the family footer (About · Privacy · By Opsette).
+ * Shell — the chrome wrapper for Brand Board. Renders the app header
+ * ("Brand Board" / dark toggle), the page content, and the footer
+ * (About · Privacy · Made by DeeBuilt).
  *
  * `headerActions` injects page-specific controls into the header's right region,
- * to the right of the dark-mode toggle — the family pattern. Don't place primary
- * buttons on the page body.
+ * to the right of the dark-mode toggle. Don't place primary buttons on the page
+ * body.
  */
 export default function Shell({
   children,
@@ -61,7 +62,7 @@ export default function Shell({
 
   return (
     <Layout style={{ minHeight: "100vh", background: isDark ? "#000" : "#f5f6f8" }}>
-      <OpsetteHeader theme={isDark ? "dark" : "light"} rightExtra={headerExtras} />
+      <AppHeader actions={headerExtras} />
 
       <Content style={{ background: isDark ? "#000" : "#f5f6f8" }}>{children}</Content>
 
@@ -82,12 +83,7 @@ export default function Shell({
             Privacy
           </Link>
           <Text type="secondary">·</Text>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            By{" "}
-            <Link href="https://opsette.io" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12 }}>
-              Opsette
-            </Link>
-          </Text>
+          <DeeBuiltCredit />
         </Space>
       </Footer>
 
