@@ -47,6 +47,7 @@ import {
   pagesToPdfBlob,
   freezePageRenders,
   pngsToPdfDataUrl,
+  countBlockedImages,
 } from "@/components/board/exportBoard";
 
 const { Text } = Typography;
@@ -229,6 +230,7 @@ function BrandBoardInner() {
         // Let the finished tick sit briefly, then close.
         window.setTimeout(() => setSavePhase(0), 900);
         message.success("Kit saved — your pages are baked in");
+        void warnBlockedImages();
       } catch {
         setSavePhase(0);
         message.error("Save failed — try again.");
@@ -259,6 +261,7 @@ function BrandBoardInner() {
       setSavePhase(3);
       window.setTimeout(() => setSavePhase(0), 900);
       message.success("Kit saved to your Downloads — your pages are baked in");
+      void warnBlockedImages();
     } catch {
       setSavePhase(0);
       message.error("Save failed — try again.");
@@ -332,6 +335,19 @@ function BrandBoardInner() {
     pages
       .map((p) => ({ page: p, node: pageRefs.current[p] }))
       .filter((e): e is { page: PageId; node: HTMLDivElement } => e.node !== null);
+
+  // After a save: if any linked image's host refused cross-site copying, it came
+  // out blank in the baked page pictures (see BLANK_IMAGE in exportBoard.ts). Say
+  // so, so a blank spot never surprises anyone. The kit itself is unaffected.
+  const warnBlockedImages = async () => {
+    const blocked = await countBlockedImages(collectPageNodes().map((e) => e.node));
+    if (blocked > 0) {
+      message.warning(
+        `${blocked} linked image${blocked === 1 ? "" : "s"} couldn't be included in the page pictures — the site hosting ${blocked === 1 ? "it" : "them"} doesn't allow it.`,
+        8,
+      );
+    }
+  };
 
   // STEP 1 of Save — the freeze. Photograph every present page into a base64 PNG
   // and fold the result into the board as `pageRenders`, so the blob we're about

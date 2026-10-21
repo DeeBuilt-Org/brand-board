@@ -10,6 +10,41 @@ export const BOARD_W = 1600;
 export const BOARD_H = 2000;
 const EXPORT_SCALE = 2;
 
+// A transparent 1×1 PNG. html-to-image has to FETCH every image to copy its
+// pixels, and a host that doesn't send Access-Control-Allow-Origin blocks that
+// (the image still displays on screen — only copying is refused). Without a
+// placeholder, one blocked image (e.g. a signature headshot linked from another
+// site) rejects the whole capture and Save fails. With it, that image comes out
+// blank in the snapshot and everything else still saves.
+const BLANK_IMAGE =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+
+/**
+ * Count the linked images inside these pages whose host refuses cross-site
+ * copying, so the caller can say "N images couldn't be included" instead of
+ * letting a blank spot surprise anyone. Same-origin and data: images are skipped.
+ */
+export async function countBlockedImages(nodes: HTMLElement[]): Promise<number> {
+  const urls = new Set<string>();
+  for (const node of nodes) {
+    node.querySelectorAll("img").forEach((img) => {
+      const src = img.currentSrc || img.src;
+      if (!/^https?:/i.test(src)) return;
+      if (new URL(src).origin === window.location.origin) return;
+      urls.add(src);
+    });
+  }
+  const results = await Promise.all(
+    [...urls].map((url) =>
+      fetch(url, { mode: "cors" }).then(
+        (r) => !r.ok,
+        () => true,
+      ),
+    ),
+  );
+  return results.filter(Boolean).length;
+}
+
 /**
  * Rasterize one page node to a PNG data URL at export resolution. The page is a
  * fixed 1600×2000 poster, snapshotted at that exact size so every page in the
@@ -28,6 +63,7 @@ export async function pageToPngDataUrl(
     height: BOARD_H,
     pixelRatio: EXPORT_SCALE,
     cacheBust: true,
+    imagePlaceholder: BLANK_IMAGE,
     // Neutralize any inherited transform so the snapshot is 1:1 at full size
     // regardless of how the preview wrapper scales it on screen.
     style: {
