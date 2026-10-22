@@ -9,10 +9,19 @@ import {
   Upload,
   message,
 } from "antd";
-import { CopyOutlined, DeleteOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import type { CollapseProps } from "antd";
 import type { BrandBoardData, SocialAsset, PageId } from "./board.types";
-import { MAX_COLORS, PAGE_META } from "./board.types";
+import { MAX_COLORS, PAGE_META, presentPages } from "./board.types";
 import { layoutsForPage, type LayoutId } from "./layouts";
+import FormSection from "./FormSection";
 import { resolvePairingId } from "@/lib/fonts";
 import { getPairing } from "@/lib/shared-fonts";
 import { OpsetteFontPicker } from "@/components/opsette-font-picker";
@@ -48,10 +57,10 @@ function EditInToolButton({
       <Button type="primary" icon={<EditOutlined />} onClick={onClick} block>
         {hasBlob ? verbEdit : verbNew}
       </Button>
-      <Text type="secondary" style={{ fontSize: 12 }}>
+      <Text type="secondary" className="bb-text-fine">
         Opens right here — no new tab. Save inside and it flows back onto the board.
       </Text>
-      <Text type="secondary" style={{ fontSize: 11, opacity: 0.8 }}>
+      <Text type="secondary" className="bb-text-fine" style={{ opacity: 0.8 }}>
         Or paste an export blob manually:
       </Text>
     </>
@@ -61,8 +70,10 @@ function EditInToolButton({
 interface BoardFormProps {
   data: BrandBoardData;
   onChange: (next: BrandBoardData) => void;
-  /** The page currently on screen — the layout picker edits THIS page's layout. */
+  /** The page currently on screen — its form section is marked active. */
   activePage: PageId;
+  /** Bring a page into the preview (clicking a numbered section heading). */
+  onSelectPage?: (page: PageId) => void;
   /** Open a tool's in-place editor (Mechanism 3 drawer). When set, each asset
    *  section offers "Edit in <Tool>" — no tab, no copy/paste. */
   onEditTool?: (key: EmbedToolKey) => void;
@@ -84,7 +95,36 @@ function readImage(
   reader.readAsDataURL(file);
 }
 
-export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormProps) {
+// An import row's label: what it adds to the board, then its source tool.
+function ImportLabel({ name, source }: { name: string; source: string }) {
+  return (
+    <>
+      {name}
+      <span className="bb-import-label__source">{source}</span>
+    </>
+  );
+}
+
+// The import rows of one form section. Every section's rows share the same
+// collapse look (plus / minus), so it lives here once.
+function ImportCollapse({
+  items,
+  defaultOpen,
+}: {
+  items: CollapseProps["items"];
+  defaultOpen?: string[];
+}) {
+  return (
+    <Collapse
+      defaultActiveKey={defaultOpen}
+      size="small"
+      expandIcon={({ isActive }) => (isActive ? <MinusOutlined /> : <PlusOutlined />)}
+      items={items}
+    />
+  );
+}
+
+export function BoardForm({ data, onChange, activePage, onSelectPage, onEditTool }: BoardFormProps) {
   const patch = (p: Partial<BrandBoardData>) => onChange({ ...data, ...p });
 
   // The logo-chip analysis is async and resolves AFTER other edits may have
@@ -96,12 +136,39 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
   const patchLatest = (p: Partial<BrandBoardData>) =>
     onChange({ ...dataRef.current, ...p });
 
-  // The layout picker acts on the ACTIVE page only. Each page carries its own
-  // layout in data.pageLayouts, and offers only the layouts that suit it.
-  const pageLayout = data.pageLayouts[activePage];
-  const pageLayoutOptions = layoutsForPage(activePage);
-  const setPageLayout = (id: LayoutId) =>
-    patch({ pageLayouts: { ...data.pageLayouts, [activePage]: id } });
+  // Each page carries its own layout in data.pageLayouts and offers only the
+  // layouts that suit it. The picker sits in that page's form section and only
+  // renders where there's a real choice (Foundation, today).
+  const renderLayoutPicker = (page: PageId) => {
+    const options = layoutsForPage(page);
+    if (options.length < 2) return null;
+    const current = data.pageLayouts[page];
+    return (
+      <div>
+        <Text strong>Layout</Text>
+        <Segmented
+          block
+          style={{ marginTop: 8 }}
+          value={current}
+          onChange={(v) => patch({ pageLayouts: { ...data.pageLayouts, [page]: v as LayoutId } })}
+          options={options.map((l) => ({ label: l.name, value: l.id }))}
+        />
+        <Text type="secondary" className="bb-text-fine" style={{ display: "block", marginTop: 6 }}>
+          {options.find((l) => l.id === current)?.blurb}
+        </Text>
+      </div>
+    );
+  };
+
+  // A numbered section's heading switches the preview to its page — once that
+  // page exists. Until then the heading is plain and the hint says what makes it.
+  const pages = presentPages(data);
+  const sectionProps = (page: PageId) => ({
+    index: PAGE_META[page].index,
+    title: PAGE_META[page].title,
+    active: page === activePage,
+    onSelect: onSelectPage && pages.includes(page) ? () => onSelectPage(page) : undefined,
+  });
   // Seed the paste fields from any already-imported blobs so a reloaded/opened
   // board shows exactly what was imported — the input is never a black hole.
   // Re-seed whenever Open swaps in a DIFFERENT stored blob: a plain once-only
@@ -160,29 +227,10 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
   };
 
   return (
-    <Space direction="vertical" size={18} style={{ width: "100%" }}>
-      {/* ---- Layout picker (the "wireframe"), scoped to the active page ----
-          Only pages with a real choice (Foundation, today) show it. Pages that
-          only stack cleanly hide the picker rather than offer a single option. */}
-      {pageLayoutOptions.length > 1 && (
-        <div>
-          <Text strong>Layout</Text>
-          <Text type="secondary" style={{ fontSize: 12, marginLeft: 8 }}>
-            {PAGE_META[activePage].index} · {PAGE_META[activePage].title}
-          </Text>
-          <Segmented
-            block
-            style={{ marginTop: 8 }}
-            value={pageLayout}
-            onChange={(v) => setPageLayout(v as LayoutId)}
-            options={pageLayoutOptions.map((l) => ({ label: l.name, value: l.id }))}
-          />
-          <Text type="secondary" style={{ fontSize: 12, display: "block", marginTop: 6 }}>
-            {pageLayoutOptions.find((l) => l.id === pageLayout)?.blurb}
-          </Text>
-        </div>
-      )}
-
+    <div className="bb-form-stack">
+      {/* The form follows the board: Brand fills every page, then one section
+          per numbered page holding the inputs that fill it. */}
+      <FormSection title="Brand">
       <div>
         <Text strong>Brand name</Text>
         <Input
@@ -218,7 +266,8 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
             size="small"
             value={data.pageColor}
             onChange={(e) => patch({ pageColor: e.target.value.toUpperCase() })}
-            style={{ width: 100, fontFamily: "monospace" }}
+            className="bb-mono"
+            style={{ width: 100 }}
           />
           <Segmented
             size="small"
@@ -276,14 +325,16 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
         </div>
       </div>
 
-      {/* ---- Import from the other tools ---- */}
-      <Collapse
-        defaultActiveKey={["palette"]}
-        size="small"
+      </FormSection>
+
+      <FormSection {...sectionProps("foundation")}>
+      {renderLayoutPicker("foundation")}
+      <ImportCollapse
+        defaultOpen={["palette"]}
         items={[
           {
             key: "palette",
-            label: "Colors & fonts — from Palette Studio",
+            label: <ImportLabel name="Colors & fonts" source="Palette Studio" />,
             children: (
               <Space direction="vertical" style={{ width: "100%" }} size={8}>
                 {onEditTool && (
@@ -299,7 +350,7 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
                   placeholder='Paste the "Export to Brand Board" blob from Palette Studio'
                   value={paletteBlob}
                   onChange={(e) => setPaletteBlob(e.target.value)}
-                  style={{ fontFamily: "monospace", fontSize: 12 }}
+                  className="bb-mono bb-text-fine"
                 />
                 <Space>
                   <Button onClick={handlePastePalette} disabled={!paletteBlob.trim()}>
@@ -315,26 +366,26 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
                   )}
                 </Space>
                 {data.sourceBlobs.palette && (
-                  <Text type="success" style={{ fontSize: 12 }}>
+                  <Text type="success" className="bb-text-fine">
                     ✓ Imported — this data is saved with the board.
                   </Text>
                 )}
                 {data.colors.length > 0 && (
                   <>
-                    <Text type="secondary" style={{ fontSize: 12 }}>Brand colors</Text>
+                    <Text type="secondary" className="bb-text-fine">Brand colors</Text>
                     <ColorList data={data} onChange={onChange} />
                   </>
                 )}
                 {data.roles && (
                   <>
-                    <Text type="secondary" style={{ fontSize: 12, marginTop: 4 }}>
+                    <Text type="secondary" className="bb-text-fine" style={{ marginTop: 4 }}>
                       Role colors
                     </Text>
                     <RolesList data={data} onChange={onChange} />
                   </>
                 )}
                 <div>
-                  <Text type="secondary" style={{ fontSize: 12 }}>Font pairing</Text>
+                  <Text type="secondary" className="bb-text-fine">Font pairing</Text>
                   <div style={{ marginTop: 4 }}>
                     <OpsetteFontPicker
                       size="small"
@@ -357,9 +408,20 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
               </Space>
             ),
           },
+        ]}
+      />
+      </FormSection>
+
+      <FormSection
+        {...sectionProps("applications")}
+        hint={pages.includes("applications") ? undefined : "Add any of these to create this page."}
+      >
+      {renderLayoutPicker("applications")}
+      <ImportCollapse
+        items={[
           {
             key: "signature",
-            label: "Email signature — from Signature Studio",
+            label: <ImportLabel name="Email signature" source="Signature Studio" />,
             children: (
               <Space direction="vertical" style={{ width: "100%" }} size={8}>
                 {onEditTool && (
@@ -375,7 +437,7 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
                   placeholder='Paste the "Export to Brand Board" blob from Signature Studio'
                   value={signatureBlob}
                   onChange={(e) => setSignatureBlob(e.target.value)}
-                  style={{ fontFamily: "monospace", fontSize: 12 }}
+                  className="bb-mono bb-text-fine"
                 />
                 <Space wrap>
                   <Button onClick={handlePasteSignature} disabled={!signatureBlob.trim()}>
@@ -406,7 +468,7 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
                   )}
                 </Space>
                 {data.sourceBlobs.signature && (
-                  <Text type="success" style={{ fontSize: 12 }}>
+                  <Text type="success" className="bb-text-fine">
                     ✓ Imported — this data is saved with the board.
                   </Text>
                 )}
@@ -415,7 +477,7 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
           },
           {
             key: "qr",
-            label: "QR code — from QR Creator",
+            label: <ImportLabel name="QR code" source="QR Creator" />,
             children: (
               <Space direction="vertical" style={{ width: "100%" }} size={8}>
                 {onEditTool && (
@@ -439,7 +501,7 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
           },
           {
             key: "card",
-            label: "Digital card — from Digital Card",
+            label: <ImportLabel name="Digital card" source="Digital Card" />,
             children: (
               <Space direction="vertical" style={{ width: "100%" }} size={8}>
                 {onEditTool && (
@@ -463,9 +525,20 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
               </Space>
             ),
           },
+        ]}
+      />
+      </FormSection>
+
+      <FormSection
+        {...sectionProps("social")}
+        hint={pages.includes("social") ? undefined : "Add either of these to create this page."}
+      >
+      {renderLayoutPicker("social")}
+      <ImportCollapse
+        items={[
           {
             key: "banner",
-            label: "Banners — from Banner Designer",
+            label: <ImportLabel name="Banners" source="Banner Designer" />,
             children: (
               <Space direction="vertical" style={{ width: "100%" }} size={8}>
                 {onEditTool && (
@@ -489,7 +562,7 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
           },
           {
             key: "social",
-            label: "Social & brand assets — from Icon Kit",
+            label: <ImportLabel name="Social & brand assets" source="Icon Kit" />,
             children: (
               <Space direction="vertical" style={{ width: "100%" }} size={8}>
                 {onEditTool && (
@@ -513,7 +586,19 @@ export function BoardForm({ data, onChange, activePage, onEditTool }: BoardFormP
           },
         ]}
       />
-    </Space>
+      </FormSection>
+
+      {/* The guide has no inputs: it's written from the palette and the pages
+          above, so the section only says how it appears. */}
+      <FormSection
+        {...sectionProps("guide")}
+        hint={
+          pages.includes("guide")
+            ? "Builds itself from your palette and the pages above."
+            : "Builds itself once you add a palette."
+        }
+      />
+    </div>
   );
 }
 
@@ -550,7 +635,8 @@ function ColorList({
             size="small"
             value={c.hex}
             onChange={(e) => update(c.id, e.target.value.toUpperCase(), c.label)}
-            style={{ width: 96, fontFamily: "monospace" }}
+            className="bb-mono"
+            style={{ width: 96 }}
           />
           <Input
             size="small"
@@ -605,9 +691,10 @@ function RolesList({
             size="small"
             value={roles[key]}
             onChange={(e) => setRole(key, e.target.value.toUpperCase())}
-            style={{ width: 96, fontFamily: "monospace" }}
+            className="bb-mono"
+            style={{ width: 96 }}
           />
-          <Text style={{ flex: 1, fontSize: 13 }}>{label}</Text>
+          <Text className="bb-text-caption" style={{ flex: 1 }}>{label}</Text>
         </div>
       ))}
     </Space>
@@ -708,7 +795,7 @@ function BlobAsset({
         placeholder={`Paste the "Export to Brand Board" blob from ${assetLabel === "QR" ? "QR Creator" : "Digital Card"}`}
         value={blob}
         onChange={(e) => setBlob(e.target.value)}
-        style={{ fontFamily: "monospace", fontSize: 12 }}
+        className="bb-mono bb-text-fine"
       />
       <Space wrap>
         <Button onClick={doImport} disabled={!blob.trim()}>
@@ -726,7 +813,7 @@ function BlobAsset({
         )}
       </Space>
       {storedBlob && (
-        <Text type="success" style={{ fontSize: 12 }}>
+        <Text type="success" className="bb-text-fine">
           ✓ {assetLabel} saved with the board — reopen anytime and copy it back into{" "}
           {assetLabel === "QR" ? "QR Creator" : "Digital Card"}.
         </Text>
@@ -735,7 +822,7 @@ function BlobAsset({
           The blob is still fully stored and re-copyable; there's just nothing to
           preview. Tell the user plainly rather than offer a dead upload path. */}
       {storedBlob && !image && (
-        <Text type="secondary" style={{ fontSize: 12 }}>
+        <Text type="secondary" className="bb-text-fine">
           This older {assetLabel} blob carries no picture — re-export it from{" "}
           {assetLabel === "QR" ? "QR Creator" : "Digital Card"} to show it on the board.
         </Text>
@@ -866,7 +953,7 @@ function SocialAssets({
         placeholder={`Paste the "Export to Brand Board" blob from ${sourceLabel}`}
         value={blob}
         onChange={(e) => setBlob(e.target.value)}
-        style={{ fontFamily: "monospace", fontSize: 12 }}
+        className="bb-mono bb-text-fine"
       />
       <Space wrap>
         <Button onClick={doImport} disabled={!blob.trim()}>

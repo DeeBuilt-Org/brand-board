@@ -234,6 +234,7 @@ export default function ToolEmbedDrawer({
           }}
         >
           <div
+            className="bb-text-caption bb-text-bold"
             style={{
               position: "absolute",
               top: "50%",
@@ -243,8 +244,6 @@ export default function ToolEmbedDrawer({
               color: "#fff",
               padding: "6px 12px",
               borderRadius: 6,
-              fontSize: 13,
-              fontWeight: 600,
               pointerEvents: "none",
             }}
           >
@@ -267,7 +266,9 @@ export default function ToolEmbedDrawer({
           background: "#fff",
         }}
       >
-        <Text style={{ fontSize: 13, fontWeight: 600, color: "#2f4f46" }}>{title}</Text>
+        <Text strong className="bb-text-caption" style={{ color: "#2f4f46" }}>
+          {title}
+        </Text>
         <Tooltip title="Close without saving">
           <button
             type="button"
@@ -307,7 +308,7 @@ export default function ToolEmbedDrawer({
             }}
           >
             <Spin size="large" />
-            <Text type="secondary" style={{ fontSize: 13 }}>
+            <Text type="secondary" className="bb-text-caption">
               Opening {title}…
             </Text>
           </div>

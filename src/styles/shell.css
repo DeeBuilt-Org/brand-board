@@ -1,0 +1,27 @@
+/**
+ * Brand Board shell: page background and footer. Colors come from tokens.css,
+ * which flips them for dark mode, so nothing here branches on the theme.
+ */
+.bb-shell.ant-layout {
+  min-height: 100vh;
+  background: var(--ops-page-bg);
+}
+
+.bb-shell__content.ant-layout-content {
+  background: var(--ops-page-bg);
+}
+
+.bb-shell__footer.ant-layout-footer {
+  text-align: center;
+  background: transparent;
+  padding: var(--ops-space-lg) var(--ops-space-xl) var(--ops-space-xl);
+  font-size: var(--ops-fs-fine);
+}
+
+.bb-shell__footer-links {
+  justify-content: center;
+}
+
+.bb-shell__footer .ant-typography {
+  font-size: var(--ops-fs-fine);
+}

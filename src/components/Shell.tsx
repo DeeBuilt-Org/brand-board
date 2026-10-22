@@ -1,23 +1,24 @@
 import { useState, type ReactNode } from "react";
-import { Layout, Space, Switch, Typography } from "antd";
+import { Button, Layout, Space, Tooltip, Typography } from "antd";
 import { SunOutlined, MoonOutlined } from "@ant-design/icons";
-import AppHeader from "@/components/AppHeader";
+import AppHeader, { SwatchesMark } from "@/components/AppHeader";
 import DeeBuiltCredit from "@/components/DeeBuiltCredit";
 import { useThemeMode } from "@/lib/theme";
 import { haptic } from "@/lib/haptics";
 import AboutModal from "@/components/AboutModal";
 import PrivacyModal from "@/components/PrivacyModal";
+import "@/styles/shell.css";
 
 const { Content, Footer } = Layout;
 const { Link, Text } = Typography;
 
 /**
  * Shell — the chrome wrapper for Brand Board. Renders the app header
- * ("Brand Board" / dark toggle), the page content, and the footer
+ * (lockup / theme toggle), the page content, and the footer
  * (About · Privacy · Made by DeeBuilt).
  *
  * `headerActions` injects page-specific controls into the header's right region,
- * to the right of the dark-mode toggle. Don't place primary buttons on the page
+ * to the right of the theme toggle. Don't place primary buttons on the page
  * body.
  */
 export default function Shell({
@@ -34,54 +35,33 @@ export default function Shell({
 
   const headerExtras = (
     <>
-      <SunOutlined
-        style={{
-          opacity: isDark ? 0.4 : 1,
-          fontSize: 13,
-          color: isDark ? "#94A3B8" : "#64748B",
-        }}
-      />
-      <Switch
-        checked={isDark}
-        onChange={() => {
-          haptic('tap');
-          toggle();
-        }}
-        size="small"
-      />
-      <MoonOutlined
-        style={{
-          opacity: isDark ? 1 : 0.4,
-          fontSize: 13,
-          color: isDark ? "#E4C49A" : "#94A3B8",
-        }}
-      />
+      <Tooltip title={isDark ? "Light mode" : "Dark mode"}>
+        <Button
+          type="text"
+          aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          icon={isDark ? <SunOutlined /> : <MoonOutlined />}
+          onClick={() => {
+            haptic("tap");
+            toggle();
+          }}
+          className="app-header__btn"
+        />
+      </Tooltip>
       {headerActions}
     </>
   );
 
   return (
-    <Layout style={{ minHeight: "100vh", background: isDark ? "#000" : "#f5f6f8" }}>
-      <AppHeader actions={headerExtras} />
+    <Layout className="bb-shell">
+      <AppHeader mark={<SwatchesMark />} name="Brand Board" actions={headerExtras} />
 
-      <Content style={{ background: isDark ? "#000" : "#f5f6f8" }}>{children}</Content>
+      <Content className="bb-shell__content">{children}</Content>
 
-      <Footer
-        style={{
-          textAlign: "center",
-          background: "transparent",
-          padding: "16px 24px 24px",
-          fontSize: 12,
-        }}
-      >
-        <Space size={8} wrap style={{ justifyContent: "center" }}>
-          <Link onClick={() => setAboutOpen(true)} style={{ fontSize: 12 }}>
-            About
-          </Link>
+      <Footer className="bb-shell__footer">
+        <Space size={8} wrap className="bb-shell__footer-links">
+          <Link onClick={() => setAboutOpen(true)}>About</Link>
           <Text type="secondary">·</Text>
-          <Link onClick={() => setPrivacyOpen(true)} style={{ fontSize: 12 }}>
-            Privacy
-          </Link>
+          <Link onClick={() => setPrivacyOpen(true)}>Privacy</Link>
           <Text type="secondary">·</Text>
           <DeeBuiltCredit />
         </Space>

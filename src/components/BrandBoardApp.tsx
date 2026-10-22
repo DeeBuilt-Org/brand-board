@@ -433,12 +433,6 @@ function BrandBoardInner() {
       menu={{
         items: [
           {
-            key: "new",
-            icon: <RocketOutlined />,
-            label: "New client kit",
-            onClick: () => setNewKitOpen(true),
-          },
-          {
             key: "open",
             icon: <FolderOpenOutlined />,
             label: "Open project…",
@@ -460,11 +454,18 @@ function BrandBoardInner() {
             disabled: !hasContent,
             onClick: resetBoard,
           },
+          { type: "divider" },
+          {
+            key: "new",
+            icon: <RocketOutlined />,
+            label: "New kit",
+            onClick: () => setNewKitOpen(true),
+          },
         ],
       }}
     >
       <Button icon={<AppstoreOutlined />}>
-        Kit <DownOutlined style={{ fontSize: 10 }} />
+        Kit <DownOutlined className="bb-caret" />
       </Button>
     </Dropdown>
   );
@@ -496,7 +497,7 @@ function BrandBoardInner() {
         loading={exporting !== null}
         disabled={!hasContent || exporting !== null}
       >
-        Download <DownOutlined style={{ fontSize: 10 }} />
+        Download <DownOutlined className="bb-caret" />
       </Button>
     </Dropdown>
   );
@@ -585,7 +586,7 @@ function BrandBoardInner() {
         onCancel={() => setSaveModalOpen(false)}
         okText="Save"
       >
-        <Text type="secondary" style={{ fontSize: 13 }}>
+        <Text type="secondary" className="bb-text-caption">
           Name this client's project file. It saves to your Downloads folder.
         </Text>
         <Input
@@ -666,6 +667,7 @@ function BrandBoardInner() {
               data={data}
               onChange={setData}
               activePage={activePage}
+              onSelectPage={setActivePage}
               onEditTool={(key) => setDrawerTool(key)}
             />
           </Card>
@@ -723,7 +725,8 @@ function BrandBoardInner() {
             {!hasContent && (
               <Text
                 type="secondary"
-                style={{ display: "block", textAlign: "center", marginTop: 14, fontSize: 13 }}
+                className="bb-text-caption"
+                style={{ display: "block", textAlign: "center", marginTop: 14 }}
               >
                 Add a business name, a color, or a logo to enable export.
               </Text>

@@ -59,10 +59,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             // (dropdown text, input text, table cells, buttons) reads larger
             // without hand-styling each one. This is the global type lever.
             fontSize: isMobile ? 16 : 14,
-            fontFamily:
-              "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            // The UI face lives in tokens.css; AntD writes this straight into
+            // its CSS, so the variable resolves at render time.
+            fontFamily: "var(--ops-font-ui)",
+            // Lato ships 400 and 700 only. AntD's default strong weight is 600,
+            // which every `Text strong`, Title and modal title reads; pin it to
+            // the real bold so the UI never asks for a third weight.
+            fontWeightStrong: 700,
           },
           components: {
+            Button: {
+              fontWeight: 700,
+            },
             Table: mode === "dark" ? undefined : { headerBg: "#f9fafb", headerColor: "#374151" },
             // Selected dropdown row: a light tint of the brand green instead of
             // AntD's default flat gray fill. Translucent so it reads as a soft

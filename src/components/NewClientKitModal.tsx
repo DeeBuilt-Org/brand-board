@@ -169,14 +169,14 @@ export default function NewClientKitModal({
         </Space>
       }
     >
-      <Paragraph type="secondary" style={{ fontSize: 13, marginTop: 4 }}>
+      <Paragraph type="secondary" className="bb-text-caption" style={{ marginTop: 4 }}>
         Fill the client's brand once. Each tool opens pre-filled with their color,
         font, name, and logo — no re-typing across tabs.
       </Paragraph>
 
       <Space direction="vertical" size={14} style={{ width: "100%" }}>
         <div>
-          <Text strong style={{ fontSize: 13 }}>
+          <Text strong className="bb-text-caption">
             Brand / client name
           </Text>
           <Input
@@ -188,7 +188,7 @@ export default function NewClientKitModal({
         </div>
 
         <div>
-          <Text strong style={{ fontSize: 13 }}>
+          <Text strong className="bb-text-caption">
             Tagline
           </Text>
           <Input
@@ -201,7 +201,7 @@ export default function NewClientKitModal({
 
         <Space size={20} align="start" wrap>
           <div>
-            <Text strong style={{ fontSize: 13, display: "block", marginBottom: 4 }}>
+            <Text strong className="bb-text-caption" style={{ display: "block", marginBottom: 4 }}>
               Seed color
             </Text>
             <ColorPicker
@@ -213,7 +213,7 @@ export default function NewClientKitModal({
           </div>
 
           <div>
-            <Text strong style={{ fontSize: 13, display: "block", marginBottom: 4 }}>
+            <Text strong className="bb-text-caption" style={{ display: "block", marginBottom: 4 }}>
               Logo
             </Text>
             <Space>
@@ -255,7 +255,7 @@ export default function NewClientKitModal({
             description={`It's over ${Math.round(
               LOGO_SEED_MAX_BYTES / 1024,
             )} KB, so the links carry name, tagline, and color — each tool will prompt to add the logo once. (Everything else still pre-fills.)`}
-            style={{ fontSize: 12 }}
+            className="bb-text-fine"
           />
         ) : null}
 
@@ -263,7 +263,7 @@ export default function NewClientKitModal({
           <Space
             style={{ width: "100%", justifyContent: "space-between", marginBottom: 6 }}
           >
-            <Text strong style={{ fontSize: 13 }}>
+            <Text strong className="bb-text-caption">
               Pre-seeded tool links
             </Text>
             <Button
@@ -295,10 +295,10 @@ export default function NewClientKitModal({
                 }}
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <Text strong style={{ fontSize: 13 }}>
+                  <Text strong className="bb-text-caption">
                     {l.label}
                   </Text>{" "}
-                  <Text type="secondary" style={{ fontSize: 12 }}>
+                  <Text type="secondary" className="bb-text-fine">
                     · {l.blurb}
                   </Text>
                 </div>

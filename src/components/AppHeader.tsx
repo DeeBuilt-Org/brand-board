@@ -1,21 +1,46 @@
 import type { ReactNode } from "react";
-import { LayoutOutlined } from "@ant-design/icons";
 import "@/styles/header.css";
 
 /**
- * AppHeader — Brand Board's own sticky header: board mark + tool name on the
- * left, page controls (theme toggle, etc.) on the right. Colors come from the
- * --app-header-* variables in header.css, which flip with the html.dark class
- * ThemeProvider toggles.
+ * AppHeader: the sticky header lockup. The mark in a colored tile, then the
+ * tool name in the display face; page-level controls (theme toggle, etc.) on
+ * the right.
+ *
+ * Copied from Decision Lab's lockup (the DeeBuilt tools design system in
+ * opsette-tools.github.io/docs/DEEBUILT-TOOLS-MIGRATION.md). Brand Board has
+ * no side rail, so it drops the nav toggle.
  */
-export default function AppHeader({ actions }: { actions?: ReactNode }) {
+export default function AppHeader({
+  mark,
+  name,
+  actions,
+}: {
+  /** An icon drawn in currentColor; it renders white on the tile. */
+  mark: ReactNode;
+  name: string;
+  actions?: ReactNode;
+}) {
   return (
     <header className="app-header">
-      <div className="app-header__title">
-        <LayoutOutlined className="app-header__mark" aria-hidden />
-        <h1 className="app-header__name">Brand Board</h1>
+      <div className="app-header__lockup">
+        <span className="app-header__tile" aria-hidden="true">
+          {mark}
+        </span>
+        <h1 className="app-header__name">{name}</h1>
       </div>
       <div className="app-header__actions">{actions}</div>
     </header>
+  );
+}
+
+/** Brand Board's mark: the swatches from its favicon, drawn in currentColor. */
+export function SwatchesMark() {
+  return (
+    <svg viewBox="0 0 256 256" fill="none" stroke="currentColor" strokeWidth={24} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="76" cy="180" r="12" fill="currentColor" stroke="none" />
+      <path d="M110.84,186.25a35.71,35.71,0,0,1-41.34,29.2h0a36,36,0,0,1-28.95-41.71l25-143.13a8,8,0,0,1,9.19-6.49l54.67,9.73a8,8,0,0,1,6.44,9.26Z" />
+      <path d="M232,156.19V208a8,8,0,0,1-8,8H76" />
+      <path d="M121.42,125.76l80.79-29.28a8,8,0,0,1,10.22,4.75l19.09,52.21a7.93,7.93,0,0,1-4.77,10.17L88.16,213.84A35.07,35.07,0,0,1,76,216" />
+    </svg>
   );
 }

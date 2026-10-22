@@ -1,0 +1,93 @@
+/**
+ * Board form sections. The heading echoes the board's own block labels:
+ * small tracked capitals, then a hairline to the edge. Colors come from
+ * tokens.css, so dark mode needs nothing here.
+ */
+.bb-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ops-space-xl);
+}
+
+.bb-form-section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--ops-space-md);
+}
+
+.bb-form-section__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--ops-space-xs);
+  flex: 0 0 auto;
+  padding: 0;
+  font-family: var(--ops-font-ui);
+  font-size: var(--ops-fs-fine);
+  font-weight: var(--ops-fw-bold);
+  letter-spacing: var(--ops-tracking-eyebrow);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--ops-text-muted);
+}
+
+.bb-form-section__index {
+  color: var(--ops-green);
+}
+
+html.dark .bb-form-section__index,
+html[data-theme="dark"] .bb-form-section__index {
+  color: var(--ops-gold-soft);
+}
+
+.bb-form-section__label--button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--ops-radius-xs);
+}
+
+.bb-form-section__label--button:hover,
+.bb-form-section.is-active .bb-form-section__label {
+  color: var(--ops-text);
+}
+
+.bb-form-section__label--button:focus-visible {
+  outline: 2px solid var(--ops-green);
+  outline-offset: 2px;
+}
+
+.bb-form-section__rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--ops-border);
+}
+
+/* The page on screen: the hairline takes the brand color. */
+.bb-form-section.is-active .bb-form-section__rule {
+  background: var(--ops-green);
+}
+
+html.dark .bb-form-section.is-active .bb-form-section__rule,
+html[data-theme="dark"] .bb-form-section.is-active .bb-form-section__rule {
+  background: var(--ops-gold-soft);
+}
+
+.bb-form-section__hint {
+  margin: var(--ops-space-xs) 0 0;
+  font-size: var(--ops-fs-fine);
+  color: var(--ops-text-muted);
+}
+
+.bb-form-section__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ops-space-lg);
+  margin-top: var(--ops-space-md);
+}
+
+/* An import row's label: what it is, then the tool it comes from, muted. */
+.bb-import-label__source {
+  margin-left: var(--ops-space-sm);
+  font-size: var(--ops-fs-fine);
+  color: var(--ops-text-muted);
+}

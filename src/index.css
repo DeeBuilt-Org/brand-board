@@ -1,6 +1,5 @@
 :root {
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--ops-font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -18,6 +17,38 @@ body,
 }
 
 body {
-  background-color: #fafafa;
-  color: #1a1a1a;
+  background-color: var(--ops-page-bg);
+  color: var(--ops-text);
+}
+
+/**
+ * Type utilities for the app chrome. Components take one of these instead of
+ * an inline fontSize / fontFamily, so every size comes from tokens.css.
+ *
+ * Each is scoped under :root on purpose: AntD writes its own font-size and
+ * font-family onto .ant-typography / .ant-input at the same single-class
+ * specificity, and its styles are injected after this file, so a bare class
+ * would lose. :root lifts these one step without !important.
+ */
+:root .bb-text-fine {
+  font-size: var(--ops-fs-fine);
+}
+
+:root .bb-text-caption {
+  font-size: var(--ops-fs-caption);
+}
+
+/* For plain elements; on AntD Text use the `strong` prop, which reads the
+   theme's fontWeightStrong (pinned to 700). */
+:root .bb-text-bold {
+  font-weight: var(--ops-fw-bold);
+}
+
+:root .bb-mono {
+  font-family: var(--ops-font-mono);
+}
+
+/* The small chevron after a dropdown button's label. */
+:root .bb-caret {
+  font-size: var(--ops-icon-caret);
 }

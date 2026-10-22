@@ -1,57 +1,61 @@
 /**
- * Brand Board header.
+ * Brand Board header lockup.
  *
- * Surface and accent colors live in the --app-header-* variables so light and
- * dark mode are one override block, not scattered conditionals. Dark mode keys
- * off the html.dark class ThemeProvider toggles.
+ * Surface, border and text colors all come from tokens.css, whose dark-mode
+ * block (html.dark / html[data-theme="dark"]) flips them, so the header needs
+ * no dark overrides of its own. The tile keeps its color in both themes.
  */
-:root {
-  --app-header-bg: #ffffff;
-  --app-header-border: #e5e7eb;
-  --app-header-accent: #2f4f46;
-}
-
-html.dark {
-  --app-header-bg: #141414;
-  --app-header-border: #303030;
-  --app-header-accent: #e4c49a;
-}
-
 .app-header {
+  --ops-header-tile-bg: var(--ops-green);
+
   position: sticky;
   top: 0;
   z-index: 100;
   display: flex;
   align-items: center;
   gap: var(--ops-space-lg);
-  height: 60px;
+  height: var(--ops-header-h);
   padding: 0 var(--ops-page-pad);
-  background: var(--app-header-bg);
-  border-bottom: 1px solid var(--app-header-border);
+  background: var(--ops-surface);
+  border-bottom: 1px solid var(--ops-border);
   box-sizing: border-box;
 }
 
-.app-header__title {
+.app-header__lockup {
   display: inline-flex;
   align-items: center;
   gap: var(--ops-space-sm);
   flex: 1 1 auto;
   min-width: 0; /* allow the name to truncate on narrow phones */
-  color: var(--app-header-accent);
 }
 
-.app-header__mark {
-  font-size: 22px;
+/* The mark sits on a small colored tile, like an app icon. */
+.app-header__tile {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ops-header-tile-size);
+  height: var(--ops-header-tile-size);
+  border-radius: var(--ops-header-tile-radius);
+  background: var(--ops-header-tile-bg);
+  color: #fff;
+  font-size: var(--ops-header-mark);
+}
+
+.app-header__tile svg {
+  width: var(--ops-header-mark);
+  height: var(--ops-header-mark);
 }
 
 .app-header__name {
   margin: 0;
-  font-size: clamp(18px, 5vw, 20px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
-  color: inherit;
+  font-family: var(--ops-font-display);
+  font-size: var(--ops-fs-wordmark);
+  font-weight: var(--ops-fw-display);
+  letter-spacing: var(--ops-tracking-display);
+  line-height: 1;
+  color: var(--ops-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -62,4 +66,16 @@ html.dark {
   align-items: center;
   gap: var(--ops-space-sm);
   flex: 0 0 auto;
+}
+
+/* Header icon buttons (theme toggle): one size, muted until hover. */
+.app-header__btn.ant-btn {
+  width: var(--ops-control-icon);
+  height: var(--ops-control-icon);
+  color: var(--ops-text-muted);
+  font-size: var(--ops-icon-chrome);
+}
+
+.app-header__btn.ant-btn:not(:disabled):hover {
+  color: var(--ops-text);
 }

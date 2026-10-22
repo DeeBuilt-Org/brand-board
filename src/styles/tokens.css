@@ -1,9 +1,14 @@
 /**
- * Global design tokens for StartUp Planner.
+ * Global design tokens for Brand Board.
  *
  * One place to tune sizing for the whole app. Components reference these
  * variables instead of hardcoding pixels inline, so the page scales as one
- * coherent system rather than a grab-bag of magic numbers.
+ * coherent system rather than a grab-bag of magic numbers. No component
+ * should ever contain a literal `fontSize: 14` — if a size is needed and
+ * isn't here, add it here first.
+ *
+ * These tokens style the app's chrome only. The board itself is set in the
+ * user's own brand fonts (board-template.css) and never reads them.
  *
  * Sizes use clamp(MIN, PREFERRED, MAX) so they grow smoothly between phone
  * and desktop — no janky jumps at a breakpoint. The middle vw-based term is
@@ -38,13 +43,82 @@
   --ops-fs-body: clamp(15px, 4vw, 16px);     /* body, table cells */
   --ops-fs-label: clamp(15px, 4vw, 16px);    /* form field labels */
   --ops-fs-sub: clamp(16px, 4.4vw, 18px);    /* intro copy / section sub */
-  --ops-fs-total: clamp(30px, 9vw, 36px);    /* the hero Year-1 number */
+  --ops-fs-h2: clamp(18px, 4.8vw, 20px);     /* section / modal heading */
+
+  /* Nav labels: smaller than body copy so navigation reads as chrome. */
+  --ops-fs-nav: 14px;
+  /* The header wordmark, set in the display face. */
+  --ops-fs-wordmark: clamp(22px, 5.6vw, 26px);
+
+  /* ---- Type families ----------------------------------------------------- */
+  /* Bodoni Moda carries names and titles; Lato carries everything you read or
+     click. theme.tsx hands --ops-font-ui to AntD so its controls match. */
+  --ops-font-display: "Bodoni Moda", "Didot", Georgia, serif;
+  --ops-font-ui: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ops-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- Font weights ------------------------------------------------------ */
+  /* Lato ships 400 and 700 only, so the UI has exactly two weights. Bodoni
+     Moda is variable; every display title uses the one display weight. No
+     rule anywhere should name a raw weight. */
+  --ops-fw-regular: 400;
+  --ops-fw-bold: 700;
+  --ops-fw-display: 600;
+  /* Display titles share one tracking with the display family and weight. */
+  --ops-tracking-display: -0.01em;
+  /* Small tracked capitals (the form's section headings). */
+  --ops-tracking-eyebrow: 0.14em;
 
   /* ---- Radius ------------------------------------------------------------ */
+  --ops-radius-xs: 4px;
   --ops-radius: 8px;
 
   /* ---- Card interior padding (breathing room inside cards) --------------- */
   --ops-card-pad: clamp(16px, 5vw, 24px);
+
+  /* ---- Brand palette ----------------------------------------------------- */
+  --ops-green: #2f4f46;
+  --ops-gold-soft: #e4c49a;
+
+  /* ---- Surfaces ---------------------------------------------------------- */
+  --ops-page-bg: #f5f6f8;
+  --ops-surface: #ffffff;
+  --ops-surface-sunken: #f6f7f6;
+  --ops-border: #e6e8e6;
+  --ops-text: #1a1a1a;
+  --ops-text-muted: #5b605c;
+
+  /* ---- Chrome ------------------------------------------------------------ */
+  /* Header height. Anything sticky under the header offsets by this. */
+  --ops-header-h: 56px;
+  /* The lockup's colored tile, its corner, and the mark inside it. */
+  --ops-header-tile-size: 28px;
+  --ops-header-tile-radius: 7px;
+  --ops-header-mark: 18px;
+  /* Square icon-only buttons in the chrome (theme toggle, etc.). */
+  --ops-control-icon: 36px;
+  /* Glyph sizes. Icons render at 1em, so these set them via font-size. */
+  --ops-icon-chrome: 20px;
+  --ops-icon-nav: 18px;
+  /* The chevron after a dropdown button's label. */
+  --ops-icon-caret: 10px;
+  --ops-nav-item-h: 36px;
+  --ops-nav-gap: 10px;
+}
+
+/**
+ * Dark mode. Dual cascade — ThemeProvider sets both the `.dark` class and the
+ * `data-theme` attribute, and tokens honor either one so a component never has
+ * to care which lever moved.
+ */
+html.dark,
+html[data-theme="dark"] {
+  --ops-page-bg: #000000;
+  --ops-surface: #141716;
+  --ops-surface-sunken: #0d0f0e;
+  --ops-border: #2a2e2c;
+  --ops-text: #f2f3f2;
+  --ops-text-muted: #9aa09c;
 }
 
 /**
